@@ -1,0 +1,19 @@
+{
+  "name": "orchestra-instrument-trainer",
+  "version": "1.0.0",
+  "description": "A spaced repetition app to help students learn orchestra instruments",
+  "main": "public/index.html",
+  "scripts": {
+    "dev": "npx serve public",
+    "deploy": "netlify deploy --prod --dir=public"
+  },
+  "keywords": [
+    "orchestra",
+    "music",
+    "education",
+    "spaced-repetition",
+    "learning"
+  ],
+  "author": "",
+  "license": "MIT"
+}

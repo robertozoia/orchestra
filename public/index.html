@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="appTitle">Orchester-Instrumenten-Trainer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes celebration {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .celebrate {
+            animation: celebration 0.6s ease-in-out;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen">
+    <!-- Language Switcher -->
+    <div class="absolute top-4 right-4 flex gap-2">
+        <button id="langDe" class="px-4 py-2 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition">
+            🇩🇪 DE
+        </button>
+        <button id="langEs" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-400 transition">
+            🇪🇸 ES
+        </button>
+        <button id="langEn" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg font-semibold hover:bg-gray-400 transition">
+            🇬🇧 EN
+        </button>
+    </div>
+
+    <!-- User Selection Screen -->
+    <div id="userScreen" class="container mx-auto px-4 py-8 max-w-2xl">
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <h1 class="text-4xl font-bold text-center mb-2 text-purple-800" data-i18n="appTitle">Orchester-Instrumenten-Trainer</h1>
+            <p class="text-center text-gray-600 mb-8" data-i18n="appSubtitle">Lerne, Orchesterinstrumente nach Gehör zu erkennen</p>
+
+            <div class="mb-6">
+                <label class="block text-lg font-semibold mb-3 text-gray-700" data-i18n="selectOrCreateUser">Benutzer auswählen oder erstellen</label>
+                <select id="userSelect" class="w-full px-4 py-3 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500 text-lg">
+                    <option value="" data-i18n="selectUser">-- Benutzer auswählen --</option>
+                </select>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-lg font-semibold mb-3 text-gray-700" data-i18n="createNewUser">Neuen Benutzer erstellen</label>
+                <div class="flex gap-2">
+                    <input
+                        type="text"
+                        id="newUserName"
+                        data-i18n-placeholder="enterYourName"
+                        placeholder="Gib deinen Namen ein"
+                        class="flex-1 px-4 py-3 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500"
+                    />
+                    <button
+                        id="createUserBtn"
+                        class="px-6 py-3 bg-purple-600 text-white rounded-lg font-semibold hover:bg-purple-700 transition"
+                        data-i18n="createButton"
+                    >
+                        Erstellen
+                    </button>
+                </div>
+            </div>
+
+            <button
+                id="startBtn"
+                class="w-full py-4 bg-green-600 text-white rounded-lg text-xl font-bold hover:bg-green-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+                disabled
+                data-i18n="startLearning"
+            >
+                Mit dem Lernen beginnen
+            </button>
+
+            <div id="userStats" class="mt-6 p-4 bg-purple-50 rounded-lg hidden">
+                <h3 class="font-semibold text-lg mb-2 text-purple-800" data-i18n="yourProgress">Dein Fortschritt</h3>
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                        <span class="text-gray-600" data-i18n="mastered">Gemeistert:</span>
+                        <span id="masteredCount" class="font-bold text-green-600 ml-2">0</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600" data-i18n="learning">Am Lernen:</span>
+                        <span id="learningCount" class="font-bold text-blue-600 ml-2">0</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600" data-i18n="totalCorrect">Gesamt Richtig:</span>
+                        <span id="totalCorrect" class="font-bold text-purple-600 ml-2">0</span>
+                    </div>
+                    <div>
+                        <span class="text-gray-600" data-i18n="totalWrong">Gesamt Falsch:</span>
+                        <span id="totalWrong" class="font-bold text-red-600 ml-2">0</span>
+                    </div>
+                </div>
+                <button
+                    id="resetProgressBtn"
+                    class="mt-4 w-full py-2 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition text-sm"
+                    data-i18n="resetProgress"
+                >
+                    Meinen Fortschritt zurücksetzen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quizScreen" class="container mx-auto px-4 py-8 max-w-2xl hidden">
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-purple-800">
+                    <span data-i18n="cardOf">Karte</span> <span id="currentCard">1</span> <span data-i18n="of">von</span> <span id="totalCards">10</span>
+                </h2>
+                <button
+                    id="exitQuizBtn"
+                    class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition"
+                    data-i18n="exitQuiz"
+                >
+                    Quiz beenden
+                </button>
+            </div>
+
+            <div class="mb-8">
+                <div class="w-full bg-gray-200 rounded-full h-3">
+                    <div id="progressBar" class="bg-purple-600 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Question Card -->
+            <div id="questionCard" class="fade-in">
+                <div class="text-center mb-8">
+                    <h3 class="text-2xl font-bold mb-4 text-gray-800" data-i18n="whichInstrument">Welches Instrument ist das?</h3>
+                    <button
+                        id="playBtn"
+                        class="px-8 py-4 bg-blue-600 text-white rounded-full text-xl font-bold hover:bg-blue-700 transition shadow-lg"
+                        data-i18n="playSound"
+                    >
+                        🔊 Klang abspielen
+                    </button>
+                </div>
+
+                <div id="optionsContainer" class="space-y-3">
+                    <!-- Options will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Feedback Card -->
+            <div id="feedbackCard" class="hidden fade-in">
+                <div id="correctFeedback" class="hidden">
+                    <div class="text-center mb-6">
+                        <div class="text-6xl mb-4 celebrate">🎉</div>
+                        <h3 class="text-3xl font-bold text-green-600 mb-2" data-i18n="correct">Richtig!</h3>
+                        <p class="text-xl text-gray-700"><span data-i18n="thatsA">Das ist ein</span> <span id="correctInstrumentName" class="font-bold"></span></p>
+                    </div>
+                </div>
+
+                <div id="wrongFeedback" class="hidden">
+                    <div class="text-center mb-6">
+                        <div class="text-6xl mb-4 shake">❌</div>
+                        <h3 class="text-3xl font-bold text-red-600 mb-2" data-i18n="notQuite">Nicht ganz...</h3>
+                        <p class="text-xl text-gray-700">
+                            <span data-i18n="thatWasA">Das war ein</span> <span id="wrongCorrectName" class="font-bold text-green-600"></span>
+                        </p>
+                        <button
+                            id="replayBtn"
+                            class="mt-4 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition"
+                            data-i18n="playAgain"
+                        >
+                            🔊 Nochmal abspielen
+                        </button>
+                        <button
+                            id="stopBtn"
+                            class="mt-4 px-6 py-3 bg-gray-600 text-white rounded-lg font-semibold hover:bg-gray-700 transition hidden"
+                            data-i18n="stop"
+                        >
+                            ⏸️ Stop
+                        </button>
+                    </div>
+                </div>
+
+                <div id="instrumentImage" class="mb-6 flex justify-center">
+                    <!-- Instrument image would go here -->
+                    <div class="w-64 h-64 bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg flex items-center justify-center">
+                        <span class="text-6xl" id="instrumentEmoji">🎻</span>
+                    </div>
+                </div>
+
+                <button
+                    id="nextBtn"
+                    class="w-full py-4 bg-purple-600 text-white rounded-lg text-xl font-bold hover:bg-purple-700 transition"
+                    data-i18n="nextCard"
+                >
+                    Nächste Karte
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Round Complete Screen -->
+    <div id="completeScreen" class="container mx-auto px-4 py-8 max-w-2xl hidden">
+        <div class="bg-white rounded-2xl shadow-xl p-8 text-center">
+            <div class="text-6xl mb-6">🎊</div>
+            <h2 class="text-4xl font-bold mb-4 text-purple-800" data-i18n="roundComplete">Runde abgeschlossen!</h2>
+
+            <div class="mb-8 p-6 bg-purple-50 rounded-lg">
+                <div class="grid grid-cols-2 gap-6 text-lg">
+                    <div>
+                        <div class="text-gray-600 mb-2" data-i18n="correctAnswers">Richtig</div>
+                        <div class="text-4xl font-bold text-green-600" id="roundCorrect">0</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-600 mb-2" data-i18n="wrongAnswers">Falsch</div>
+                        <div class="text-4xl font-bold text-red-600" id="roundWrong">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="masteryMessage" class="mb-6 p-4 bg-green-50 border-2 border-green-200 rounded-lg hidden">
+                <p class="text-green-800 font-semibold text-lg"><span data-i18n="masteredNew">🎯 Du hast</span> <span id="newlyMastered"></span> <span data-i18n="newInstruments">neue(s) Instrument(e) gemeistert!</span></p>
+            </div>
+
+            <div class="space-y-3">
+                <button
+                    id="continueBtn"
+                    class="w-full py-4 bg-green-600 text-white rounded-lg text-xl font-bold hover:bg-green-700 transition"
+                    data-i18n="continueLearning"
+                >
+                    Weiter lernen
+                </button>
+                <button
+                    id="backToMenuBtn"
+                    class="w-full py-3 bg-gray-500 text-white rounded-lg font-semibold hover:bg-gray-600 transition"
+                    data-i18n="backToMenu"
+                >
+                    Zurück zum Menü
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/js/translations.js"></script>
+    <script src="src/js/i18n.js"></script>
+    <script src="src/js/data.js"></script>
+    <script src="src/js/audioManager.js"></script>
+    <script src="src/js/userManager.js"></script>
+    <script src="src/js/quizLogic.js"></script>
+    <script src="src/js/app.js"></script>
+</body>
+</html>
