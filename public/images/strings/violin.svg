@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" width="200" height="400">
+  <defs>
+    <linearGradient id="woodGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8B4513;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#654321;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Body -->
+  <ellipse cx="100" cy="200" rx="60" ry="80" fill="url(#woodGrad)" stroke="#654321" stroke-width="2"/>
+  <!-- F-holes -->
+  <path d="M 80 180 Q 75 200 80 220" stroke="black" stroke-width="8" fill="none"/>
+  <path d="M 120 180 Q 125 200 120 220" stroke="black" stroke-width="8" fill="none"/>
+  <!-- Neck -->
+  <rect x="92" y="80" width="16" height="120" fill="#654321"/>
+  <!-- Scroll -->
+  <circle cx="100" cy="70" r="15" fill="#654321" stroke="#000" stroke-width="2"/>
+  <!-- Strings -->
+  <line x1="95" y1="80" x2="95" y2="280" stroke="#C0C0C0" stroke-width="1"/>
+  <line x1="98" y1="80" x2="98" y2="280" stroke="#C0C0C0" stroke-width="1"/>
+  <line x1="102" y1="80" x2="102" y2="280" stroke="#C0C0C0" stroke-width="1"/>
+  <line x1="105" y1="80" x2="105" y2="280" stroke="#C0C0C0" stroke-width="1"/>
+  <!-- Bridge -->
+  <rect x="90" y="220" width="20" height="8" fill="#D2691E"/>
+</svg>

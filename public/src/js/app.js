@@ -218,8 +218,8 @@ class App {
         this.questionCard.classList.add('hidden');
         this.feedbackCard.classList.remove('hidden');
 
-        // Update instrument display
-        this.instrumentEmoji.textContent = correctInstrument.emoji;
+        // Update instrument display with image or emoji
+        this.updateInstrumentDisplay(correctInstrument);
 
         if (isCorrect) {
             this.correctFeedback.classList.remove('hidden');
@@ -231,6 +231,62 @@ class App {
             this.wrongCorrectName.textContent = i18n.getInstrumentName(correctInstrumentId);
             this.stopBtn.classList.add('hidden');
         }
+    }
+
+    updateInstrumentDisplay(instrument) {
+        const container = document.getElementById('instrumentImage');
+
+        // Try to use image if available, otherwise use emoji
+        const imagePath = `images/${instrument.type}/${instrument.id}.jpg`;
+        const imagePathPng = `images/${instrument.type}/${instrument.id}.png`;
+        const imagePathSvg = `images/${instrument.type}/${instrument.id}.svg`;
+
+        // Create img element and try loading
+        const img = new Image();
+        img.onload = () => {
+            // Image loaded successfully
+            container.innerHTML = `
+                <img src="${img.src}"
+                     alt="${instrument.name}"
+                     class="w-64 h-64 object-contain rounded-lg shadow-lg bg-white"
+                     style="max-height: 300px; max-width: 300px;" />
+            `;
+        };
+        img.onerror = () => {
+            // Image failed, try PNG
+            const imgPng = new Image();
+            imgPng.onload = () => {
+                container.innerHTML = `
+                    <img src="${imgPng.src}"
+                         alt="${instrument.name}"
+                         class="w-64 h-64 object-contain rounded-lg shadow-lg bg-white"
+                         style="max-height: 300px; max-width: 300px;" />
+                `;
+            };
+            imgPng.onerror = () => {
+                // PNG also failed, try SVG
+                const imgSvg = new Image();
+                imgSvg.onload = () => {
+                    container.innerHTML = `
+                        <img src="${imgSvg.src}"
+                             alt="${instrument.name}"
+                             class="w-64 h-64 object-contain rounded-lg shadow-lg bg-white"
+                             style="max-height: 300px; max-width: 300px;" />
+                    `;
+                };
+                imgSvg.onerror = () => {
+                    // All images failed, fall back to emoji
+                    container.innerHTML = `
+                        <div class="w-64 h-64 bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg flex items-center justify-center shadow-lg">
+                            <span class="text-8xl">${instrument.emoji}</span>
+                        </div>
+                    `;
+                };
+                imgSvg.src = imagePathSvg;
+            };
+            imgPng.src = imagePathPng;
+        };
+        img.src = imagePath;
     }
 
     replaySound() {

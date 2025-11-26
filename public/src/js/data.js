@@ -6,6 +6,7 @@ const INSTRUMENTS = [
         name: 'Violin',
         type: 'strings',
         audioPath: 'sounds/strings/violin.mp3',
+        imagePath: 'images/strings/violin.svg',
         emoji: '🎻'
     },
     {
